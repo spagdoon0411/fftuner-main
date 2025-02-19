@@ -1,5 +1,5 @@
-<script>
-  import { Button } from '$lib/components/ui/button'
+<script lang="ts">
+  import DeviceSelector from './DeviceSelector.svelte'
 </script>
 
-<Button>Click me</Button>
+<DeviceSelector />
