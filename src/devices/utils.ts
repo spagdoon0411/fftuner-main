@@ -1,4 +1,5 @@
 import { info, error, debug } from '@tauri-apps/plugin-log'
+import { invoke } from '@tauri-apps/api/core'
 
 export type FftunerDevice = {
   name: string
@@ -6,26 +7,17 @@ export type FftunerDevice = {
   selectorId: string
 }
 
-const dummyDevices = [
-  {
-    name: 'Device 1',
-    hostName: 'localhost',
-    selectorId: 'device1',
-  },
-  {
-    name: 'Device 2',
-    hostName: 'localhost',
-    selectorId: 'device2',
-  },
-  {
-    name: 'Device 3',
-    hostName: 'localhost',
-    selectorId: 'device3',
-  },
-]
-
-// Maps to cpal command to get devices
-export function getFftunerDevices(): FftunerDevice[] {
+export async function fetchDevices(): Promise<FftunerDevice[]> {
   debug('Getting devices')
-  return dummyDevices
+  let devices: FftunerDevice[] = []
+
+  const res = await invoke('get_devices').catch((e) => {
+    error('Error getting devices: ' + e)
+    devices = []
+    return devices
+  })
+
+  devices = JSON.parse(res as string) as FftunerDevice[]
+
+  return devices
 }
