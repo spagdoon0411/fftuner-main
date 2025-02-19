@@ -3,9 +3,17 @@
   import type { FftunerDevice } from './utils'
   import { fetchDevices, setDevice } from './utils'
   import { info, error, debug } from '@tauri-apps/plugin-log'
+  import { untrack } from 'svelte'
 
   let availableDevices: FftunerDevice[] = $state([])
-  let selectedDevice: FftunerDevice | null = $state(null)
+  let selectedIndex: number | null = $state(null)
+  let selectedDevice: FftunerDevice | null = $derived.by(() => {
+    const devs = untrack(() => availableDevices)
+    if (selectedIndex !== null) {
+      return devs[selectedIndex]
+    }
+    return null
+  })
 
   let openState = $state(false)
 
@@ -24,9 +32,10 @@
   }
 
   function setSelected(selectorId: string) {
-    selectedDevice =
-      availableDevices?.find((device) => device.selectorId === selectorId) ??
-      null
+    selectedIndex =
+      availableDevices?.findIndex(
+        (device) => device.selectorId === selectorId
+      ) ?? null
 
     if (selectedDevice) {
       setDevice(selectorId)
