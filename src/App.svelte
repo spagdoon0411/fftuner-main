@@ -1,5 +1,5 @@
 <script>
-  import { Button } from '$lib/components/ui/button'
+  import DeviceSelector from './devices/DeviceSelector.svelte'
 </script>
 
-<Button>Click me</Button>
+<DeviceSelector />
