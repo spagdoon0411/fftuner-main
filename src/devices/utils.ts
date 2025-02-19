@@ -22,9 +22,9 @@ export async function fetchDevices(): Promise<FftunerDevice[]> {
   return devices
 }
 
-export async function setDevice(selectorId: string): Promise<boolean> {
+export async function setDevice(index: number): Promise<boolean> {
   const res = await invoke('set_device', {
-    selectorId: selectorId.toString(),
+    index: index,
   }).catch((e) => {
     error('Error setting device: ' + e)
     return false

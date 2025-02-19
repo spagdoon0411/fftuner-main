@@ -31,16 +31,8 @@
     openState = !openState
   }
 
-  function setSelected(selectorId: string) {
-    selectedIndex =
-      availableDevices?.findIndex(
-        (device) => device.selectorId === selectorId
-      ) ?? null
-
-    if (selectedDevice) {
-      setDevice(selectorId)
-    }
-
+  function setSelected(index: number) {
+    setDevice(index)
     openState = false
   }
 </script>
@@ -62,13 +54,13 @@
           class="bg-zinc-800 text-zinc-400"
         />
       {:then}
-        {#each availableDevices as device}
+        {#each availableDevices as device, index}
           <Select.Item
             value={device.selectorId}
             label={device.name}
             class="bg-zinc-800 text-zinc-400"
             on:click={() => {
-              setSelected(device.selectorId)
+              setSelected(index)
             }}
           />
         {/each}
