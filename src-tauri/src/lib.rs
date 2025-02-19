@@ -7,7 +7,11 @@ use log;
 use serde::Serialize;
 use serde_json;
 
+static mut SELECTED_DEVICE: Option<&FftunerDevice> = None;
+static mut DEVICES: Vec<FftunerDevice> = Vec::new();
+
 #[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
 pub struct FftunerDevice {
     name: String,
     host_name: String,
@@ -52,7 +56,29 @@ fn get_devices() -> String {
     log::info!("Found {} devices on the backend", devices.len());
     // log::info!("Serialized devices: {}", devs_ser);
 
+    unsafe {
+        DEVICES = devices;
+    }
+
     devs_ser
+}
+
+#[tauri::command]
+fn set_device(selector_id: String) {
+    let device = unsafe {
+        DEVICES
+            .iter()
+            .find(|d| d.selector_id == selector_id)
+            .unwrap()
+    };
+
+    unsafe {
+        SELECTED_DEVICE = Some(device);
+        log::info!(
+            "Selected device with id: {}",
+            SELECTED_DEVICE.as_ref().unwrap().selector_id
+        );
+    }
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
@@ -60,7 +86,7 @@ pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_log::Builder::new().build())
         .plugin(tauri_plugin_opener::init())
-        .invoke_handler(tauri::generate_handler![get_devices])
+        .invoke_handler(tauri::generate_handler![get_devices, set_device])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

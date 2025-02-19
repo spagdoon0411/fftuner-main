@@ -1,7 +1,7 @@
 <script lang="ts">
   import * as Select from '$lib/components/ui/select'
   import type { FftunerDevice } from './utils'
-  import { fetchDevices } from './utils'
+  import { fetchDevices, setDevice } from './utils'
   import { info, error, debug } from '@tauri-apps/plugin-log'
 
   let availableDevices: FftunerDevice[] = $state([])
@@ -27,6 +27,11 @@
     selectedDevice =
       availableDevices?.find((device) => device.selectorId === selectorId) ??
       null
+
+    if (selectedDevice) {
+      setDevice(selectorId)
+    }
+
     openState = false
   }
 </script>
